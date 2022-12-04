@@ -1,5 +1,7 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.qdox.model.expression.Or;
+import io.restassured.http.ContentType;
 import okhttp3.*;
 import org.example.Answer;
 import org.example.Category;
@@ -10,6 +12,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.when;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AppTest {
@@ -155,4 +160,92 @@ public class AppTest {
     }
 
 
+    @Test
+    @Order(40)
+    public void postPetAssured(){
+        int id = 45545;
+        Category category = new Category(5 , "MyDoggo");
+        String name = "Forex";
+        Tags tags = new Tags(2 , "Best");
+        String photoUrl  = "MyUrl";
+        String status = "good";
+        List<String> photoUrlList = new ArrayList<>();
+        photoUrlList.add(photoUrl);
+        List<org.example.Tags> tagsList = new ArrayList<>();
+        tagsList.add(tags);
+
+
+        Answer requestBoby = new Answer(id , category , name , photoUrlList , tagsList , status);
+        Answer entity = given().
+                contentType(ContentType.JSON).
+                body(requestBoby).
+                when().
+                post("https://petstore.swagger.io/v2/pet/").
+                then().log().all().
+                statusCode(200).extract().as(Answer.class);
+
+        Assertions.assertEquals(requestBoby , entity);
+    }
+
+    @Test
+    @Order(50)
+    public void petByIdAssure() {
+
+        int id = 5564445;
+        Category category = new Category(5 , "MyDoggo");
+        String name = "Forexes";
+        org.example.Tags tags = new org.example.Tags(2 , "Best");
+        String photoUrl  = "MyUrl";
+        String status = "good";
+        List<String> photoUrlList = new ArrayList<>();
+        photoUrlList.add(photoUrl);
+        List<org.example.Tags> tagsList = new ArrayList<>();
+        tagsList.add(tags);
+
+        Answer requestBoby = new Answer(id , category , name , photoUrlList , tagsList , status);
+
+        Answer entity = given().
+                body(requestBoby).
+                contentType(ContentType.JSON).
+                when().
+                post("https://petstore.swagger.io/v2/pet/").
+                then().log().all().statusCode(200).
+                extract().as(Answer.class);
+        Assertions.assertEquals(requestBoby , entity);
+
+        entity = given()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("https://petstore.swagger.io/v2/pet/" + id)
+                .then().log().all().statusCode(200)
+                .extract().as(Answer.class);
+
+        Assertions.assertEquals(requestBoby , entity);
+    }
+
+    @Test
+    @Order(60)
+    public void updatePetAssure(){
+        int id = 5564445;
+        Category category = new Category(5 , "MyDoggo");
+        String name = "Santa";
+        org.example.Tags tags = new org.example.Tags(2 , "Best");
+        String photoUrl  = "MyUrl";
+        String status = "good";
+        List<String> photoUrlList = new ArrayList<>();
+        photoUrlList.add(photoUrl);
+        List<org.example.Tags> tagsList = new ArrayList<>();
+        tagsList.add(tags);
+
+        Answer requestBoby = new Answer(id , category , name , photoUrlList , tagsList , status);
+
+        Answer entity = given().
+                body(requestBoby).
+                contentType(ContentType.JSON).
+                when().
+                put("https://petstore.swagger.io/v2/pet/").
+                then().log().all().statusCode(200).
+                extract().as(Answer.class);
+        Assertions.assertEquals(requestBoby , entity);
+    }
 }

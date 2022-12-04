@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Answer {
     protected int id;
@@ -82,5 +83,18 @@ public class Answer {
                 ", tags=" + tags +
                 ", status='" + status + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Answer answer = (Answer) o;
+        return id == answer.id && Objects.equals(category, answer.category) && Objects.equals(name, answer.name) && Objects.equals(photoUrls, answer.photoUrls) && Objects.equals(tags, answer.tags) && Objects.equals(status, answer.status);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, category, name, photoUrls, tags, status);
     }
 }
